@@ -122,9 +122,6 @@ import { validateBookingTimeIsNotOutOfBounds } from "./handleNewBooking/validate
 import { validateEventLength } from "./handleNewBooking/validateEventLength";
 import handleSeats from "./handleSeats/handleSeats";
 
-const ERR_NO_AVAILABLE_USERS = "no_available_users_found_error";
-const ERR_FIXED_HOSTS_UNAVAILABLE = "fixed_hosts_unavailable_for_booking";
-
 const translator = short();
 const log = logger.getSubLogger({ prefix: ["[api] book:user"] });
 
@@ -858,10 +855,7 @@ async function handler(
               qualifiedRRUsers: qualifiedRRUsers.map((user) => user.id),
             })
           );
-
-          throw pickNoAvailabilityError({
-            eventType, // whatever variable in scope holds the event type/config
-          });
+          throw new Error(ErrorCode.NoAvailableUsersFound);
         }
       }
 
@@ -2443,24 +2437,6 @@ async function handler(
     seatReferenceUid: evt.attendeeSeatId,
     videoCallUrl: metadata?.videoCallUrl,
   };
-}
-function pickNoAvailabilityError(opts: { eventType?: any }): Error {
-  const et = opts.eventType ?? {};
-  const schedulingType = (et?.schedulingType ?? "").toString().toUpperCase();
-
-  // hosts in Cal look like { user, isFixed, ... }
-  const fixedHostsCount = Array.isArray(et?.hosts)
-    ? et.hosts.filter((h: any) => h?.isFixed === true).length
-    : Array.isArray(et?.fixedHosts)
-    ? et.fixedHosts.length
-    : 0;
-
-  const isCollective = schedulingType === "COLLECTIVE";
-
-  if (isCollective && fixedHostsCount > 0) {
-    return new Error(ERR_FIXED_HOSTS_UNAVAILABLE);
-  }
-  return new Error(ERR_NO_AVAILABLE_USERS);
 }
 
 export default handler;
