@@ -827,10 +827,6 @@ async function handler(
           shouldServeCache
         );
       } catch {
-        const isTeamEvent =
-          Boolean(eventType?.teamId) ||
-          (Array.isArray(eventType?.hosts) && eventType.hosts.length > 1) ||
-          eventType?.schedulingType?.toUpperCase?.() === "COLLECTIVE";
         if (additionalFallbackRRUsers.length) {
           loggerWithEventDetails.debug(
             "Qualified users not available, check for fallback users",
@@ -865,7 +861,6 @@ async function handler(
 
           throw pickNoAvailabilityError({
             eventType, // whatever variable in scope holds the event type/config
-            isTeamEvent, // if you have such a boolean; otherwise you can omit it
           });
         }
       }
@@ -2449,25 +2444,20 @@ async function handler(
     videoCallUrl: metadata?.videoCallUrl,
   };
 }
-function pickNoAvailabilityError(opts: {
-  eventType?: any; // tolerate unknown shape to keep this change simple
-  isTeamEvent?: boolean;
-}): Error {
+function pickNoAvailabilityError(opts: { eventType?: any }): Error {
   const et = opts.eventType ?? {};
-  // common shapes in cal.com code:
-  // - et.schedulingType can be "COLLECTIVE" | "ROUND_ROBIN" | ...
-  // - et.hosts may be an array when hosts are fixed for collective scheduling
-  const schedulingType = et?.schedulingType as string | undefined;
+  const schedulingType = (et?.schedulingType ?? "").toString().toUpperCase();
+
+  // hosts in Cal look like { user, isFixed, ... }
   const fixedHostsCount = Array.isArray(et?.hosts)
-    ? et.hosts.length
+    ? et.hosts.filter((h: any) => h?.isFixed === true).length
     : Array.isArray(et?.fixedHosts)
     ? et.fixedHosts.length
     : 0;
 
-  const isCollective = schedulingType?.toUpperCase?.() === "COLLECTIVE";
-  const looksFixedHosts = (fixedHostsCount ?? 0) > 0;
+  const isCollective = schedulingType === "COLLECTIVE";
 
-  if ((opts.isTeamEvent && isCollective && looksFixedHosts) || (isCollective && looksFixedHosts)) {
+  if (isCollective && fixedHostsCount > 0) {
     return new Error(ERR_FIXED_HOSTS_UNAVAILABLE);
   }
   return new Error(ERR_NO_AVAILABLE_USERS);
