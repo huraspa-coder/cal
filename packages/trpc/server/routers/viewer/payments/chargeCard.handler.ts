@@ -1,4 +1,4 @@
-import appStore from "@calcom/app-store";
+import { PaymentServiceMap } from "@calcom/app-store/payment.services.generated";
 import dayjs from "@calcom/dayjs";
 import { sendNoShowFeeChargedEmail } from "@calcom/emails";
 import { getTranslation } from "@calcom/lib/server/i18n";
@@ -115,9 +115,14 @@ export const chargeCardHandler = async ({ ctx, input }: ChargeCardHandlerOptions
     throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid payment credential" });
   }
 
-  const paymentApp = (await appStore[
-    paymentCredential?.app?.dirName as keyof typeof appStore
-  ]?.()) as PaymentApp;
+  const normalizedDirName = paymentCredential.app.dirName as keyof typeof PaymentServiceMap;
+  const paymentAppPromise = PaymentServiceMap[normalizedDirName];
+
+  if (!paymentAppPromise) {
+    throw new TRPCError({ code: "BAD_REQUEST", message: "Payment service not found" });
+  }
+
+  const paymentApp = (await paymentAppPromise) as PaymentApp;
 
   if (!paymentApp?.lib?.PaymentService) {
     throw new TRPCError({ code: "BAD_REQUEST", message: "Payment service not found" });
