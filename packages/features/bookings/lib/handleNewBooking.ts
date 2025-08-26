@@ -827,6 +827,10 @@ async function handler(
           shouldServeCache
         );
       } catch {
+        const isTeamEvent =
+          Boolean(eventType?.teamId) ||
+          (Array.isArray(eventType?.hosts) && eventType.hosts.length > 1) ||
+          eventType?.schedulingType?.toUpperCase?.() === "COLLECTIVE";
         if (additionalFallbackRRUsers.length) {
           loggerWithEventDetails.debug(
             "Qualified users not available, check for fallback users",
@@ -858,6 +862,7 @@ async function handler(
               qualifiedRRUsers: qualifiedRRUsers.map((user) => user.id),
             })
           );
+
           throw pickNoAvailabilityError({
             eventType, // whatever variable in scope holds the event type/config
             isTeamEvent, // if you have such a boolean; otherwise you can omit it
