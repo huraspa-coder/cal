@@ -16,6 +16,7 @@ import { Label, MultiSelectCheckbox, TextField, CheckboxField } from "@calcom/ui
 import { Icon } from "@calcom/ui/components/icon";
 
 import { isSMSAction } from "../lib/actionHelperFunctions";
+import { isFormTrigger } from "../lib/variableTranslations";
 import type { FormValues } from "../pages/workflow";
 import { AddActionDialog } from "./AddActionDialog";
 import { DeleteDialog } from "./DeleteDialog";
@@ -144,7 +145,11 @@ export default function WorkflowDetailsPage(props: Props) {
               </div>
             </div>
           ) : (
-            <Label>{t("which_event_type_apply")}</Label>
+            <Label>
+              {isFormTrigger(form.getValues("trigger"))
+                ? t("which_routing_form_apply")
+                : t("which_event_type_apply")}
+            </Label>
           )}
           <Controller
             name="activeOn"
@@ -160,7 +165,13 @@ export default function WorkflowDetailsPage(props: Props) {
                   setValue={(s: Option[]) => {
                     form.setValue("activeOn", s);
                   }}
-                  countText={isOrg ? "count_team" : "nr_event_type"}
+                  countText={
+                    isOrg
+                      ? "count_team"
+                      : isFormTrigger(form.getValues("trigger"))
+                      ? "nr_routing_form"
+                      : "nr_event_type"
+                  }
                 />
               );
             }}
@@ -170,7 +181,13 @@ export default function WorkflowDetailsPage(props: Props) {
               name="selectAll"
               render={({ field: { value, onChange } }) => (
                 <CheckboxField
-                  description={isOrg ? t("apply_to_all_teams") : t("apply_to_all_event_types")}
+                  description={
+                    isOrg
+                      ? t("apply_to_all_teams")
+                      : isFormTrigger(form.getValues("trigger"))
+                      ? t("apply_to_all_routing_forms")
+                      : t("apply_to_all_event_types")
+                  }
                   disabled={props.readOnly}
                   onChange={(e) => {
                     onChange(e);
