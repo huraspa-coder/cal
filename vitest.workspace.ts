@@ -94,6 +94,7 @@ const workspaces = packagedEmbedTestsOnly
             "apps/web/test/lib/getSchedule/calendarEvents.test.ts",
             "apps/web/test/lib/getSchedule/delegation-credential.test.ts",
             "apps/web/test/lib/getSchedule/selectedSlots.test.ts",
+            
           ],
           name: "@calcom/lib",
           setupFiles: ["setupVitest.ts"],
