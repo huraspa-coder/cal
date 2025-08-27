@@ -78,6 +78,11 @@ const workspaces = packagedEmbedTestsOnly
             "packages/platform/**/*",
             "apps/api/v1/**/*",
             "apps/api/v2/**/*",
+             "packages/features/bookings/lib/handleNewBooking/test/team-bookings/collective-scheduling.test.ts",
+                      "packages/features/bookings/lib/handleNewBooking/test/team-bookings/round-robin.test.ts",
+                      "packages/features/bookings/lib/handleNewBooking/test/fresh-booking.test.ts",
+                      "packages/features/bookings/lib/handleNewBooking/test/reschedule.test.ts",
+                      "packages/features/bookings/lib/handleNewBooking/test/workflow-notifications.test.ts"
           ],
           name: "@calcom/lib",
           setupFiles: ["setupVitest.ts"],
