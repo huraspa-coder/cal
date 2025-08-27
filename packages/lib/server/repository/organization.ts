@@ -273,6 +273,7 @@ export class OrganizationRepository {
         orgProfileRedirectsToVerifiedDomain: true,
         orgAutoAcceptEmail: true,
         disablePhoneOnlySMSNotifications: true,
+        disableAutoFillOnBookingPage: true,
       },
     });
 
@@ -291,6 +292,7 @@ export class OrganizationRepository {
         orgProfileRedirectsToVerifiedDomain: organizationSettings?.orgProfileRedirectsToVerifiedDomain,
         orgAutoAcceptEmail: organizationSettings?.orgAutoAcceptEmail,
         disablePhoneOnlySMSNotifications: organizationSettings?.disablePhoneOnlySMSNotifications,
+        disableAutoFillOnBookingPage: organizationSettings?.disableAutoFillOnBookingPage,
       },
       user: {
         role: membership?.role,
@@ -299,6 +301,21 @@ export class OrganizationRepository {
       ...membership?.team,
       metadata,
     };
+  }
+
+  static async getDisableAutoFillOnBookingPageSetting(organizationId: number | null): Promise<boolean> {
+    if (!organizationId) return false;
+
+    const organizationSettings = await prisma.organizationSettings.findUnique({
+      where: {
+        organizationId,
+      },
+      select: {
+        disableAutoFillOnBookingPage: true,
+      },
+    });
+
+    return organizationSettings?.disableAutoFillOnBookingPage ?? false;
   }
 
   static async findTeamsInOrgIamNotPartOf({ userId, parentId }: { userId: number; parentId: number | null }) {
