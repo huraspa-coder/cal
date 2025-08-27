@@ -80,9 +80,17 @@ const workspaces = packagedEmbedTestsOnly
             "apps/api/v2/**/*",
              "packages/features/bookings/lib/handleNewBooking/test/team-bookings/collective-scheduling.test.ts",
                       "packages/features/bookings/lib/handleNewBooking/test/team-bookings/round-robin.test.ts",
+                      "packages/features/bookings/lib/handleNewBooking/test/round-robin-no-hosts.test.ts",
                       "packages/features/bookings/lib/handleNewBooking/test/fresh-booking.test.ts",
                       "packages/features/bookings/lib/handleNewBooking/test/reschedule.test.ts",
-                      "packages/features/bookings/lib/handleNewBooking/test/workflow-notifications.test.ts"
+                      "packages/features/bookings/lib/handleNewBooking/test/handleNewRecurringBooking.test.ts",
+                      "packages/features/bookings/lib/handleNewBooking/test/workflow-notifications.test.ts",
+                      "packages/features/bookings/lib/handleNewBooking/test/recurring-event.test.ts",
+                      "packages/features/bookings/lib/handleNewBooking/test/delegation-credential.test.ts",
+                      "packages/features/bookings/lib/handleNewBooking/test/date-overrides.test.ts",
+                      "packages/features/bookings/lib/handleNewBooking/test/complex-schedules.test.ts",
+                      "packages/features/ee/round-robin/roundRobinDeleteEvents.test.ts",
+                      "packages/features/bookings/lib/handleNewBooking/test/team-bookings/collective-reschedule-destination-calendar.test.ts"
           ],
           name: "@calcom/lib",
           setupFiles: ["setupVitest.ts"],
