@@ -1516,6 +1516,7 @@ export function getOrganizer({
   organizationId,
   metadata,
   smsLockState,
+  bookingLimits,
   completedOnboarding,
   username,
   locked,
@@ -1533,6 +1534,7 @@ export function getOrganizer({
   teams?: InputUser["teams"];
   metadata?: userMetadataType;
   smsLockState?: SMSLockState;
+  bookingLimits?: IntervalLimit;
   completedOnboarding?: boolean;
   username?: string;
   locked?: boolean;
@@ -1555,6 +1557,7 @@ export function getOrganizer({
     profiles: [],
     metadata,
     smsLockState,
+    bookingLimits,
     completedOnboarding,
     locked,
   };
