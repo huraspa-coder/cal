@@ -23,7 +23,6 @@ type Host<T> = {
   createdAt: Date;
   priority?: number | null;
   weight?: number | null;
-  groupId: string | null;
 } & {
   user: T;
 };
@@ -46,13 +45,15 @@ function getFallBackWithContactOwner<T extends { user: { id: number } }>(
   return [...fallbackHosts, contactOwner];
 }
 
-const isRoundRobinHost = <T extends { isFixed: boolean }>(host: T): host is T & { isFixed: false } => {
-  return host.isFixed === false;
-};
+function isFixedHost<T extends { isFixed?: boolean }>(host: T): host is T & { isFixed: true } {
+  return host.isFixed === true; // Handle undefined case
+}
 
-const isFixedHost = <T extends { isFixed: boolean }>(host: T): host is T & { isFixed: false } => {
-  return host.isFixed;
-};
+function isRoundRobinHost<T extends { isFixed?: boolean }>(
+  host: T
+): host is T & { isFixed: false | undefined } {
+  return host.isFixed !== true; // Treat undefined as round-robin
+}
 
 export class QualifiedHostsService {
   constructor(public readonly dependencies: IQualifiedHostsService) {}
@@ -120,8 +121,14 @@ export class QualifiedHostsService {
       return { qualifiedRRHosts: roundRobinHosts, fixedHosts };
     }
 
-    const fixedHosts = normalizedHosts.filter(isFixedHost);
-    const roundRobinHosts = normalizedHosts.filter(isRoundRobinHost);
+    // Ensure isFixed is always a boolean
+    const normalizedHostsWithFixedBoolean = normalizedHosts.map((host) => ({
+      ...host,
+      isFixed: host.isFixed ?? false,
+    }));
+
+    const fixedHosts = normalizedHostsWithFixedBoolean.filter(isFixedHost);
+    const roundRobinHosts = normalizedHostsWithFixedBoolean.filter(isRoundRobinHost);
 
     // If it is rerouting, we should not force reschedule with same host.
     const hostsAfterRescheduleWithSameRoundRobinHost = applyFilterWithFallback(

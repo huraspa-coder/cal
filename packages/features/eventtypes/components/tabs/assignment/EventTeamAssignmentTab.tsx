@@ -775,11 +775,11 @@ export const EventTeamAssignmentTab = ({
     getValues("assignAllTeamMembers") ?? false
   );
 
-  const resetRROptions = () => {
+  const resetRROptions = useCallback(() => {
     setValue("assignRRMembersUsingSegment", false, { shouldDirty: true });
     setValue("assignAllTeamMembers", false, { shouldDirty: true });
     setAssignAllTeamMembers(false);
-  };
+  }, [setValue, setAssignAllTeamMembers]);
 
   const handleSchedulingTypeChange = useCallback(
     (schedulingType: SchedulingType | undefined, onChange: (value: SchedulingType | undefined) => void) => {
@@ -788,7 +788,7 @@ export const EventTeamAssignmentTab = ({
         resetRROptions();
       }
     },
-    [setValue, setAssignAllTeamMembers]
+    [setValue, setAssignAllTeamMembers, resetRROptions]
   );
 
   const handleMaxLeadThresholdChange = (val: string, onChange: (value: number | null) => void) => {
