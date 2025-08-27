@@ -44,14 +44,12 @@ export { handleNewRecurringBooking } from "@calcom/features/bookings/lib/handleN
 export { getConnectedDestinationCalendarsAndEnsureDefaultsInDb } from "@calcom/lib/getConnectedDestinationCalendars";
 
 export { getBusyCalendarTimes } from "@calcom/lib/CalendarManager";
+export { default as cityTimezones } from "./city-timezones-compat";
 
 export type { BookingCreateBody, BookingResponse } from "@calcom/features/bookings/types";
 export { HttpError } from "@calcom/lib/http-error";
 
 export { MINUTES_TO_BOOK } from "@calcom/lib/constants";
-
-export { cityTimezonesHandler } from "@calcom/features/cityTimezones/cityTimezonesHandler";
-export type { CityTimezones } from "@calcom/features/cityTimezones/cityTimezonesHandler";
 
 export { TRPCError } from "@trpc/server";
 export { createNewUsersConnectToOrgIfExists };
